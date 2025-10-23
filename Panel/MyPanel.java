@@ -33,6 +33,8 @@ public class MyPanel extends JPanel implements KeyListener , Runnable{
         for (int i = 0; i < enemyTankNum; i++) {
             enemyTank = new EnemyTank(100 * (i + 1), 100, 2, 1, 10);
             enemyTanks.add(enemyTank);
+            // 启动敌人坦克线程
+            new Thread(enemyTank).start();
             // 创建敌人坦克的子弹线程
             Bullet bullet = new Bullet(enemyTank.getX() + 20, enemyTank.getY() + 20, enemyTank.getDir());
             enemyTank.enemyBullet.add(bullet);
@@ -224,12 +226,14 @@ public class MyPanel extends JPanel implements KeyListener , Runnable{
     @Override
     public void run() {
         while (true) {
+            // 刷新画面
             this.repaint();
+            // 检测子弹是否击中敌人坦克
             hitEnemyTank();
 
-            // 休眠20毫秒
+            // 休眠20ms, 1000/休眠时间 = 刷新率
             try {
-                Thread.sleep(20);
+                Thread.sleep(50);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

@@ -7,6 +7,7 @@ import java.util.Vector;
  * 玩家的坦克
  */
 public class Hero extends Tank{
+
     public Vector<Bullet> heroBullet = new Vector<>();
 
     public Hero(int x, int y, int dir, int type, int speed) {
@@ -19,29 +20,11 @@ public class Hero extends Tank{
      * 发射子弹,子弹初始坐标为坦克炮管坐标
      */
     /*Bullet实例的声明应该放在方法外面作为类的全局变量,其声明周期和类的实例相同, 因为该实例需要反复调用*/
-//    public Bullet bullet = null;
-
-
-
+    //    public Bullet bullet = null;
     public void heroShot() {
-        Bullet bullet = null;
-        switch(getDir()) {
-            case 0:
-                bullet = new Bullet(getX() + 20, getY(), getDir());
-                break;
-            case 1:
-                bullet = new Bullet(getX() + 60, getY() + 20, getDir());
-                break;
-            case 2:
-                bullet = new Bullet(getX() + 20, getY() + 60, getDir());
-                break;
-            case 3:
-                bullet = new Bullet(getX(), getY() + 20, getDir());
-                break;
-            default:
-                break;
-        }
-
+        // this为当前实例对象,this.tankShot(this)为调用tankShot()方法,传递的this就是heroTank
+        // 调用父类的tankShot()方法,会隐式的加上this参数,所以这里可以不写第一个this,但是显示调用更好
+        Bullet bullet = this.tankShot(this);
         heroBullet.add(bullet);
         // 启动子弹线程
         new Thread(bullet).start();
