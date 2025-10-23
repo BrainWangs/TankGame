@@ -2,8 +2,8 @@ package draw.TankGame.Panel;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 /**
  * 爆炸效果类
@@ -72,8 +72,14 @@ public class Bomb {
         images = new BufferedImage[ImageNumber];
         for (int i = 0; i < ImageNumber; i++) {
             try {
-                // 修改文件名以匹配实际文件 (blast_1.png, blast_2.png, blast_3.png)
-                images[i] = ImageIO.read(new File("src/com/draw/img/blast_" + (i+1) + ".png"));
+                // 使用类加载器获取资源路径
+                String imagePath = "draw/TankGame/img/blast_" + (i+1) + ".png";
+                URL imageURL = Bomb.class.getClassLoader().getResource(imagePath);
+                if (imageURL != null) {
+                    images[i] = ImageIO.read(imageURL);
+                } else {
+                    throw new IOException("无法找到图片资源: " + imagePath);
+                }
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
