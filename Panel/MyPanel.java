@@ -35,11 +35,11 @@ public class MyPanel extends JPanel implements KeyListener , Runnable{
             enemyTanks.add(enemyTank);
             // 启动敌人坦克线程
             new Thread(enemyTank).start();
-            // 创建敌人坦克的子弹线程
-            Bullet bullet = new Bullet(enemyTank.getX() + 20, enemyTank.getY() + 20, enemyTank.getDir());
-            enemyTank.enemyBullet.add(bullet);
-            // 启动子弹线程
-            new Thread(bullet).start();
+//            // 创建敌人坦克的子弹线程
+//            Bullet bullet = new Bullet(enemyTank.getX() + 20, enemyTank.getY() + 20, enemyTank.getDir());
+//            enemyTank.enemyBullets.add(bullet);
+//            // 启动子弹线程
+//            new Thread(bullet).start();
         }
         // 初始化爆炸图片
         Bomb.imageInit();
@@ -62,17 +62,17 @@ public class MyPanel extends JPanel implements KeyListener , Runnable{
             drawTank(enemyTanks.get(i).getX(), enemyTanks.get(i).getY(), g, enemyTanks.get(i).getDir(), 1);
         }
         // 绘制玩家坦克的子弹
-        for (int i = 0; i < hero.heroBullet.size(); i++) {
-            if (hero.heroBullet.get(i).getLive()) {
-                g.fillRect(hero.heroBullet.get(i).getX(), hero.heroBullet.get(i).getY(), 2, 2);
+        for (int i = 0; i < hero.heroBullets.size(); i++) {
+            if (hero.heroBullets.get(i).getLive()) {
+                g.fillRect(hero.heroBullets.get(i).getX(), hero.heroBullets.get(i).getY(), 2, 2);
             }
         }
 
         // 绘制敌人坦克的子弹
         for (int i = 0; i < enemyTanks.size(); i++) {
             if (enemyTanks.get(i).getLive()) {
-                for (int j = 0; j < enemyTanks.get(i).enemyBullet.size(); j++) {
-                    g.fillRect(enemyTanks.get(i).enemyBullet.get(j).getX(), enemyTanks.get(i).enemyBullet.get(j).getY(), 2, 2);
+                for (int j = 0; j < enemyTanks.get(i).enemyBullets.size(); j++) {
+                    g.fillRect(enemyTanks.get(i).enemyBullets.get(j).getX(), enemyTanks.get(i).enemyBullets.get(j).getY(), 2, 2);
                 }
             }
         }
@@ -188,10 +188,10 @@ public class MyPanel extends JPanel implements KeyListener , Runnable{
     public void bulletShot(Tank tank) {
         Bullet bullet = new Bullet(tank.getX(), tank.getY(), tank.getDir());
         if (tank instanceof EnemyTank) {
-            ((EnemyTank)tank).enemyBullet.add(bullet);
+            ((EnemyTank)tank).enemyBullets.add(bullet);
         }
         if (tank instanceof Hero) {
-            ((Hero)tank).heroBullet.add(bullet);
+            ((Hero)tank).heroBullets.add(bullet);
         }
         new Thread(bullet).start();
 
@@ -204,8 +204,8 @@ public class MyPanel extends JPanel implements KeyListener , Runnable{
      * 思路: 遍历所有玩家坦克的子弹, 遍历所有敌人坦克, 检测子弹坐标是否在敌人坦克区域内
      */
     public void hitEnemyTank() {
-        for (int i = 0; i < hero.heroBullet.size(); i++) {
-            Bullet bullet = hero.heroBullet.get(i);
+        for (int i = 0; i < hero.heroBullets.size(); i++) {
+            Bullet bullet = hero.heroBullets.get(i);
             for (int j = 0; j < enemyTanks.size(); j++) {
                 EnemyTank enemyTank = enemyTanks.get(j);
                 if (bullet.getLive() && enemyTank.getLive()) {

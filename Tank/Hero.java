@@ -8,7 +8,7 @@ import java.util.Vector;
  */
 public class Hero extends Tank{
 
-    public Vector<Bullet> heroBullet = new Vector<>();
+    public Vector<Bullet> heroBullets = new Vector<>();
 
     public Hero(int x, int y, int dir, int type, int speed) {
         super(x, y, dir, 0, speed);
@@ -25,7 +25,7 @@ public class Hero extends Tank{
         // this为当前实例对象,this.tankShot(this)为调用tankShot()方法,传递的this就是heroTank
         // 调用父类的tankShot()方法,会隐式的加上this参数,所以这里可以不写第一个this,但是显示调用更好
         Bullet bullet = this.tankShot(this);
-        heroBullet.add(bullet);
+        heroBullets.add(bullet);
         // 启动子弹线程
         new Thread(bullet).start();
     }
