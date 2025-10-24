@@ -26,14 +26,14 @@ public class EnemyTank extends Tank implements Runnable{
 
     public void randomTimeShot() {
         int randomTime = (int)(Math.random() * 1000);
-        if (randomTime > 500) {
+        if (randomTime % 2 == 0) {
             enemyShot();
         }
     }
 
     /**
-     * 敌人坦克移动
-     * 随机移动
+     * @description 敌人坦克随机移动方法
+     *
      */
     public void enemyMove() {
         // 随机移动的步数
@@ -55,7 +55,7 @@ public class EnemyTank extends Tank implements Runnable{
 
 
     /**
-     * 这个线程控制敌人坦克的随机移动
+     * @description 这个线程控制敌人坦克的随机移动
      */
     @Override
     public void run() {

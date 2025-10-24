@@ -77,9 +77,9 @@ public class Bullet implements Runnable{
         }
     }
 
-    /*游戏边界检测*/
+    /*子弹碰撞边界检测*/
     public void checkHit() {
-        if (x < 0 || x > Width || y < 0 || y > Height) {
+        if (x < 0 || x >= Width || y < 0 || y >= Height) {
             isLive = false;
         }
     }
@@ -122,14 +122,14 @@ public class Bullet implements Runnable{
 
 
     /**
-     * 该线程只要启动bullet就会不断运行更新子弹坐标,直到死亡
+     * @description 该线程只要启动bullet就会不断运行更新子弹坐标,直到死亡
      */
     @Override
     public void run() {
         while (true) {
             // 移动bullet
             move(dir);
-            System.out.println("子弹的坐标: " + x + " " + y);
+//            System.out.println("子弹的坐标: " + x + " " + y);
             
             
             // 休眠50毫秒

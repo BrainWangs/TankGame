@@ -70,7 +70,7 @@ public class Tank {
 
     /**
      * 封装方法: 移动坦克
-     * 可以供给所有坦克类对象的移动
+     * @description 可以供给所有坦克类对象的移动
      */
     public void move(int dir) {
         // 保存当前位置
@@ -104,7 +104,7 @@ public class Tank {
 
     /**
      * 封装方法: 发射子弹
-     * 由于每个坦克发射的子弹都不同,所以不能在Tank类中定义,需要在子类中定义,这里仅作为对子弹方向判断的封装
+     * @description  由于每个坦克发射的子弹都不同,所以不能在Tank类中定义,需要在子类中定义,这里仅作为对子弹方向判断的封装
      * @param tank 接收坦克对象,根据dir属性创建bullet对象
      * @return 返回创建的子弹对象
      */
@@ -132,23 +132,22 @@ public class Tank {
 
     /**
      * 封装方法: 边界检测
-     * 坦克移动时,判断是否越界,越界则返回true,否则返回false
+     * @description 坦克移动时,判断是否越界,越界则返回true,否则返回false
      */
     public boolean checkHit() {
+        // 根据坦克方向使用不同的尺寸进行边界检测
         switch (dir) {
-            case 0:
-            case 2:
+            // 上下方向 (垂直) - 尺寸 40x60
+            case 0:  // 上
+            case 2:  // 下
                 if (x < 0 || x + 40 > Width || y < 0 || y + 60 > Height) {
                     return true;
                 }
                 break;
-            case 1:
-                if (x < 0 || x + 60 > Width || y < 0 || y + 20 > Height) {
-                    return true;
-                }
-                break;
-            case 3:
-                if (x < 0 || x + 20 > Width || y < 0 || y + 60 > Height) {
+            // 左右方向 (水平) - 尺寸 60x40
+            case 1:  // 右
+            case 3:  // 左
+                if (x < 0 || x + 60 > Width || y < 0 || y + 40 > Height) {
                     return true;
                 }
                 break;

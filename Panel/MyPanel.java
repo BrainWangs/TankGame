@@ -53,10 +53,13 @@ public class MyPanel extends JPanel implements KeyListener , Runnable{
         super.paint(g);
         // 设置窗口大小
         g.fillRect(0, 0, Width, Height);
-        // 设置颜色
+        // 设置背景颜色
         g.setColor(Color.BLACK);
-        // 通过创建对象生成坦克
-        drawTank(hero.getX(), hero.getY(), g, hero.getDir(), hero.getType());
+        // 通过创建对象生成玩家坦克
+        // 只有当玩家坦克存活时才绘制
+        if (hero.getLive()) {
+            drawTank(hero.getX(), hero.getY(), g, hero.getDir(), hero.getType());
+        }
         // 遍历绘制敌人坦克集合
         for (int i = 0; i < enemyTanks.size(); i++) {
             drawTank(enemyTanks.get(i).getX(), enemyTanks.get(i).getY(), g, enemyTanks.get(i).getDir(), 1);
@@ -65,18 +68,23 @@ public class MyPanel extends JPanel implements KeyListener , Runnable{
         for (int i = 0; i < hero.heroBullets.size(); i++) {
             if (hero.heroBullets.get(i).getLive()) {
                 g.fillRect(hero.heroBullets.get(i).getX(), hero.heroBullets.get(i).getY(), 2, 2);
+            } else {
+                // 当子弹死亡时, 移除该子弹
+                hero.heroBullets.remove(i);
             }
         }
-
         // 绘制敌人坦克的子弹
         for (int i = 0; i < enemyTanks.size(); i++) {
             if (enemyTanks.get(i).getLive()) {
                 for (int j = 0; j < enemyTanks.get(i).enemyBullets.size(); j++) {
                     g.fillRect(enemyTanks.get(i).enemyBullets.get(j).getX(), enemyTanks.get(i).enemyBullets.get(j).getY(), 2, 2);
                 }
+            } else {
+                // 当敌人坦克死亡时, 移除该坦克
+                enemyTanks.remove(i);
             }
         }
-
+        // 绘制爆炸图片
         for (int i = 0; i < bombs.size(); i++) {
             Bomb bomb = bombs.get(i);
             if (bomb.getLive()) {
@@ -145,33 +153,33 @@ public class MyPanel extends JPanel implements KeyListener , Runnable{
 
     @Override
     public void keyPressed(KeyEvent e) {
-        // 顺序是上右下左 0123
-        switch (e.getKeyChar()) {
-            case 'w':
-                hero.move(0);
-                hero.setDir(0);
-                break;
-            case 'd' :
-                hero.move(1);
-                hero.setDir(1);
-                break;
-            case 's':
-                hero.move(2);
-                hero.setDir(2);
-                break;
-            case 'a':
-                hero.move(3);
-                hero.setDir(3);
-                break;
-            default:
-                break;
+        if (hero.getLive()) {
+            // 顺序是上右下左 0123
+            switch (e.getKeyChar()) {
+                case 'w':
+                    hero.move(0);
+                    hero.setDir(0);
+                    break;
+                case 'd' :
+                    hero.move(1);
+                    hero.setDir(1);
+                    break;
+                case 's':
+                    hero.move(2);
+                    hero.setDir(2);
+                    break;
+                case 'a':
+                    hero.move(3);
+                    hero.setDir(3);
+                    break;
+                default:
+                    break;
+            }
+            // 键盘按下空格键发射子弹
+            if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                hero.heroShot();
+            }
         }
-
-
-        if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-            hero.heroShot();
-        }
-
         this.repaint();
         /*注意repaint()方法会重新运行paint()方法*/
 
@@ -198,10 +206,9 @@ public class MyPanel extends JPanel implements KeyListener , Runnable{
     }
 
     /**
-     * 判断我方子弹是否击中敌人坦克
-     * @version 1.0
-     * 双重for, 效率低
-     * 思路: 遍历所有玩家坦克的子弹, 遍历所有敌人坦克, 检测子弹坐标是否在敌人坦克区域内
+     * 判断是否击中敌人的方法
+     * @description 判断我方子弹是否击中敌人坦克(双重for, 效率低)
+     * @thought 遍历所有玩家坦克的子弹, 遍历所有敌人坦克, 检测子弹坐标是否在敌人坦克区域内
      */
     public void hitEnemyTank() {
         for (int i = 0; i < hero.heroBullets.size(); i++) {
@@ -213,6 +220,8 @@ public class MyPanel extends JPanel implements KeyListener , Runnable{
                     if (Bullet.checkHit(bullet, enemyTank)) {
                         // 从集合中删除这个被击中的坦克对象
                         enemyTanks.remove(j);
+                        // 击中坦克的子弹设置为死亡(false)在下一次绘制时,从集合中删除该子弹对象
+                        bullet.setLive(false);
                         // 添加bomb对象 绘制爆炸效果
                         bombs.add(new Bomb(enemyTank.getX(), enemyTank.getY()));
 
@@ -222,7 +231,30 @@ public class MyPanel extends JPanel implements KeyListener , Runnable{
         }
     }
 
-    /*在main中启动MyPanel这个线程, 刷新画面*/
+    /**
+     * @description 检测敌人子弹是否击中玩家坦克
+     * @thought 遍历所有敌人坦克的子弹, 遍历所有玩家坦克, 检测子弹坐标是否在玩家坦克区域内
+     */
+    public void hitHeroTank() {
+        for (int i = 0; i < enemyTanks.size(); i++) {
+            EnemyTank enemyTank = enemyTanks.get(i);
+            for (int j = 0; j < enemyTank.enemyBullets.size(); j++) {
+                Bullet bullet = enemyTank.enemyBullets.get(j);
+                if (bullet.getLive() && hero.getLive()) {
+                    if (Bullet.checkHit(bullet, hero)) {
+                        hero.setLive(false);
+                        bombs.add(new Bomb(hero.getX(), hero.getY()));
+                        System.out.println("游戏结束");
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 在main中启动MyPanel这个线程, 刷新画面
+     * 包括重绘界面、检测子弹是否击中敌人等功能
+     */
     @Override
     public void run() {
         while (true) {
@@ -230,7 +262,8 @@ public class MyPanel extends JPanel implements KeyListener , Runnable{
             this.repaint();
             // 检测子弹是否击中敌人坦克
             hitEnemyTank();
-
+            // 检测敌人子弹是否击中玩家坦克
+            hitHeroTank();
             // 休眠20ms, 1000/休眠时间 = 刷新率
             try {
                 Thread.sleep(50);
