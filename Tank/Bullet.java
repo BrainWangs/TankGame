@@ -78,13 +78,16 @@ public class Bullet implements Runnable{
     }
 
     /*子弹碰撞边界检测*/
-    public void checkHit() {
+    public void checkBorderHit() {
         if (x < 0 || x >= Width || y < 0 || y >= Height) {
             isLive = false;
         }
     }
 
-    /*子弹碰撞检测 静态工具类*/
+    /**
+     * @description 检测子弹是否与tank碰撞
+     * 共用于敌人子弹和玩家子弹的碰撞检测
+     * */
     public static boolean checkHit(Bullet bullet, Tank tank) {
         if (bullet != null && tank != null && bullet.getLive()) {
             switch (tank.getDir()) {
@@ -139,7 +142,7 @@ public class Bullet implements Runnable{
                 e.printStackTrace();
             }
             // 边界检测
-            checkHit();
+            checkBorderHit();
             if (!isLive) {
                 System.out.println("子弹死亡 " + Thread.currentThread());
                 break;

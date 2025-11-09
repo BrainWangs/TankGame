@@ -16,9 +16,9 @@ public class MyPanel extends JPanel implements KeyListener , Runnable{
     public static int Width = 1000;
     public static int Height = 750;
     public static int enemyTankNum = 5;
+    public Vector<EnemyTank> enemyTanks = new Vector<>();
 
     Hero hero = null;
-    Vector<EnemyTank> enemyTanks = new Vector<>();
     ArrayList<Bomb> bombs = new ArrayList<>();
 
     /**
@@ -35,11 +35,11 @@ public class MyPanel extends JPanel implements KeyListener , Runnable{
             enemyTanks.add(enemyTank);
             // 启动敌人坦克线程
             new Thread(enemyTank).start();
-//            // 创建敌人坦克的子弹线程
-//            Bullet bullet = new Bullet(enemyTank.getX() + 20, enemyTank.getY() + 20, enemyTank.getDir());
-//            enemyTank.enemyBullets.add(bullet);
-//            // 启动子弹线程
-//            new Thread(bullet).start();
+            // 启动敌人坦克子弹线程....
+            /*@说明: 此块原本逻辑是在创建敌人坦克时立刻启动子弹线程, 后续改进为在enemyTank实例线程中随机发射子弹*/
+            // 设置enemyTanks对象
+            enemyTank.setEnemyTanks(enemyTanks);
+
         }
         // 初始化爆炸图片
         Bomb.imageInit();
@@ -77,7 +77,9 @@ public class MyPanel extends JPanel implements KeyListener , Runnable{
         for (int i = 0; i < enemyTanks.size(); i++) {
             if (enemyTanks.get(i).getLive()) {
                 for (int j = 0; j < enemyTanks.get(i).enemyBullets.size(); j++) {
-                    g.fillRect(enemyTanks.get(i).enemyBullets.get(j).getX(), enemyTanks.get(i).enemyBullets.get(j).getY(), 2, 2);
+                    if (enemyTanks.get(i).enemyBullets.get(j).getLive()) {
+                        g.fillRect(enemyTanks.get(i).enemyBullets.get(j).getX(), enemyTanks.get(i).enemyBullets.get(j).getY(), 2, 2);
+                    }
                 }
             } else {
                 // 当敌人坦克死亡时, 移除该坦克
@@ -157,19 +159,19 @@ public class MyPanel extends JPanel implements KeyListener , Runnable{
             // 顺序是上右下左 0123
             switch (e.getKeyChar()) {
                 case 'w':
-                    hero.move(0);
+                    hero.heroMove(0);
                     hero.setDir(0);
                     break;
                 case 'd' :
-                    hero.move(1);
+                    hero.heroMove(1);
                     hero.setDir(1);
                     break;
                 case 's':
-                    hero.move(2);
+                    hero.heroMove(2);
                     hero.setDir(2);
                     break;
                 case 'a':
-                    hero.move(3);
+                    hero.heroMove(3);
                     hero.setDir(3);
                     break;
                 default:
@@ -191,8 +193,9 @@ public class MyPanel extends JPanel implements KeyListener , Runnable{
 
 
     /**
-     * 封装发射子弹的方法
+     * @description 封装发射子弹的方法(未使用)
      */
+    @Deprecated
     public void bulletShot(Tank tank) {
         Bullet bullet = new Bullet(tank.getX(), tank.getY(), tank.getDir());
         if (tank instanceof EnemyTank) {
@@ -243,6 +246,7 @@ public class MyPanel extends JPanel implements KeyListener , Runnable{
                 if (bullet.getLive() && hero.getLive()) {
                     if (Bullet.checkHit(bullet, hero)) {
                         hero.setLive(false);
+                        bullet.setLive(false);
                         bombs.add(new Bomb(hero.getX(), hero.getY()));
                         System.out.println("游戏结束");
                     }
@@ -253,7 +257,7 @@ public class MyPanel extends JPanel implements KeyListener , Runnable{
 
     /**
      * 在main中启动MyPanel这个线程, 刷新画面
-     * 包括重绘界面、检测子弹是否击中敌人等功能
+     * @description 包括重绘界面、检测子弹是否击中敌人等功能
      */
     @Override
     public void run() {

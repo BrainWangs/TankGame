@@ -17,7 +17,7 @@ public class Hero extends Tank{
 
 
     /**
-     * @description 已将发射子弹的方法封装为tankShot移动到父类Tank中,在子类中为每个子弹对象添加到集合中并启动线程
+     * @description 已将发射子弹的方法封装为tankShot()移动到父类Tank中,在子类中为每个子弹对象添加到集合中并启动线程
      * 发射子弹,子弹初始坐标为坦克炮管坐标
      */
     /*Bullet实例的声明应该放在方法外面作为类的全局变量,其声明周期和类的实例相同, 因为该实例需要反复调用*/
@@ -33,6 +33,16 @@ public class Hero extends Tank{
         heroBullets.add(bullet);
         // 启动子弹线程
         new Thread(bullet).start();
+    }
+
+    /**
+     * @description 玩家坦克移动
+     */
+    public void heroMove(int dir) {
+        // 移动前检查是否越界
+
+        // 移动
+        move(dir);
     }
 
 

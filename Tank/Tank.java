@@ -70,7 +70,7 @@ public class Tank {
 
     /**
      * 封装方法: 移动坦克
-     * @description 可以供给所有坦克类对象的移动
+     * @description 可以供给所有坦克类对象的移动.在每次移动前检测是否越界,越界则恢复原位置
      */
     public void move(int dir) {
         // 保存当前位置
@@ -156,4 +156,5 @@ public class Tank {
         }
         return false;
     }
+
 }
