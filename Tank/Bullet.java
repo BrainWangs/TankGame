@@ -1,10 +1,12 @@
 package draw.TankGame.Tank;
 
+import java.io.Serializable;
+
 import static draw.TankGame.Panel.MyPanel.Height;
 import static draw.TankGame.Panel.MyPanel.Width;
 
 /*绘制子弹的移动效果*/
-public class Bullet implements Runnable{
+public class Bullet implements Runnable, Serializable {
     private int x;
     private int y;
     private int speed = 10;

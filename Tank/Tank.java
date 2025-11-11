@@ -1,9 +1,11 @@
 package draw.TankGame.Tank;
 
+import java.io.Serializable;
+
 import static draw.TankGame.Panel.MyPanel.Height;
 import static draw.TankGame.Panel.MyPanel.Width;
 
-public class Tank {
+public class Tank implements Serializable {
     private int x;
     private int y;
     private int dir;

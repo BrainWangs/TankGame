@@ -3,17 +3,17 @@ package draw.TankGame.Tank;
 import java.util.Vector;
 
 public class EnemyTank extends Tank implements Runnable{
-    public static Vector<EnemyTank> enemyTanks = null;
+    public Vector<EnemyTank> enemyTanks = null;
 
     public Vector<EnemyTank> getEnemyTanks() {
         return enemyTanks;
     }
 
     /**
-     * @description 为了在碰撞检测中遍历坦克集合, 这里设置set方法在MyPanel中调用
+     * @description 为了在碰撞检测中遍历坦克集合,这里设置set方法在MyPanel中调用
      */
     public void setEnemyTanks(Vector<EnemyTank> enemyTanks) {
-        EnemyTank.enemyTanks = enemyTanks;
+        this.enemyTanks = enemyTanks;
     }
 
     /**

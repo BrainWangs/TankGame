@@ -15,7 +15,6 @@ public class Hero extends Tank{
         // setType(0); // 玩家坦克(再次声明防止数据错误)
     }
 
-
     /**
      * @description 已将发射子弹的方法封装为tankShot()移动到父类Tank中,在子类中为每个子弹对象添加到集合中并启动线程
      * 发射子弹,子弹初始坐标为坦克炮管坐标

@@ -17,9 +17,9 @@ public class MyPanel extends JPanel implements KeyListener , Runnable{
     public static int Height = 750;
     public static int enemyTankNum = 5;
     public Vector<EnemyTank> enemyTanks = new Vector<>();
-
     Hero hero = null;
     ArrayList<Bomb> bombs = new ArrayList<>();
+    // Record record = null;
 
     /**
      * 在构造器内初始化后面会用到的一些集合
@@ -39,14 +39,16 @@ public class MyPanel extends JPanel implements KeyListener , Runnable{
             /*@说明: 此块原本逻辑是在创建敌人坦克时立刻启动子弹线程, 后续改进为在enemyTank实例线程中随机发射子弹*/
             // 设置enemyTanks对象
             enemyTank.setEnemyTanks(enemyTanks);
-
         }
         // 初始化爆炸图片
         Bomb.imageInit();
     }
 
 
-    // 重写Paint方法
+    /**
+     * @description paint()用于绘制图形,窗口中所有图形的生成都基于此方法
+     *
+     */
     @Override
     public void paint(Graphics g) {
         // 绘制窗口
@@ -55,6 +57,7 @@ public class MyPanel extends JPanel implements KeyListener , Runnable{
         g.fillRect(0, 0, Width, Height);
         // 设置背景颜色
         g.setColor(Color.BLACK);
+        showInfo(g);
         // 通过创建对象生成玩家坦克
         // 只有当玩家坦克存活时才绘制
         if (hero.getLive()) {
@@ -98,7 +101,7 @@ public class MyPanel extends JPanel implements KeyListener , Runnable{
     }
 
     /**
-     * 编写生成坦克图案的方法
+     * @description 编写生成坦克图案的方法
      */
     public void drawTank(int x, int y, Graphics g, int direction, int type) {
         // 绘制坦克颜色
@@ -227,6 +230,9 @@ public class MyPanel extends JPanel implements KeyListener , Runnable{
                         bullet.setLive(false);
                         // 添加bomb对象 绘制爆炸效果
                         bombs.add(new Bomb(enemyTank.getX(), enemyTank.getY()));
+                        // 添加记录信息
+                        Record.addDestroyedEnemyNum();
+                        Record.addScore();
 
                     }
                 }
@@ -253,6 +259,31 @@ public class MyPanel extends JPanel implements KeyListener , Runnable{
                 }
             }
         }
+    }
+
+    /**
+     * @description 创建一个记录窗口,保存成绩
+     */
+    public void showInfo(Graphics g) {
+
+        g.setColor(Color.BLACK);
+        g.setFont(new Font("宋体", Font.BOLD, 25));
+
+        g.drawString("累积击毁的坦克数量", 1020, 30);
+        // 在左边画一个黄色坦克作为计数图标
+        drawTank(1020, 60, g, 0, 1);
+        g.setColor(Color.BLACK);
+        // 数字记录显式
+        g.drawString(" " + Record.getDestroyedNum(), 1080, 100);
+    }
+
+    /**
+     * @description 传递引用给Record类,记录hero和enemyTanks的相关信息并序列化
+     * 仅当关闭窗口时调用此方法,记录最后一次坐标信息
+     */
+    public void transferToRecord() {
+        Record.setHero(hero);
+        Record.setEnemyTanks(enemyTanks);
     }
 
     /**
