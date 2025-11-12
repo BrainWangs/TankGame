@@ -16,15 +16,35 @@ public class MyPanel extends JPanel implements KeyListener , Runnable{
     public static int Width = 1000;
     public static int Height = 750;
     public static int enemyTankNum = 5;
+
     public Vector<EnemyTank> enemyTanks = new Vector<>();
-    Hero hero = null;
-    ArrayList<Bomb> bombs = new ArrayList<>();
-    // Record record = null;
+    public Hero hero = null;
+    public ArrayList<Bomb> bombs = new ArrayList<>();
 
     /**
      * 在构造器内初始化后面会用到的一些集合
      */
-    public MyPanel() {
+    public MyPanel(int select) {
+        // Test
+        Record.readRecord("record.dat");
+
+        // 初始化坦克的方法最开始放在这里,后续封装到InitMyPanel()方法中
+        // 在main中获取输入选择开始新游戏或读取记录进行游戏
+        switch (select) {
+            case 2:
+                initMyPanelByRecord();
+                break;
+            default:
+                initMyPanel();
+                break;
+        }
+    }
+
+    /**
+     * @description 用于MyPanel构造器初始化的方法
+     */
+    // 默认初始化
+    public void initMyPanel() {
         // 创建玩家坦克
         hero = new Hero(300, 300, 0, 0, 10);
         // 创建敌人坦克
@@ -39,11 +59,32 @@ public class MyPanel extends JPanel implements KeyListener , Runnable{
             /*@说明: 此块原本逻辑是在创建敌人坦克时立刻启动子弹线程, 后续改进为在enemyTank实例线程中随机发射子弹*/
             // 设置enemyTanks对象
             enemyTank.setEnemyTanks(enemyTanks);
+            // 初始化爆炸图片
+            Bomb.imageInit();
         }
-        // 初始化爆炸图片
-        Bomb.imageInit();
     }
 
+    // 根据record记录的信息进行初始化
+    public void initMyPanelByRecord() {
+        if (Record.getHero() != null && Record.getEnemyTanks() != null) {
+            hero = Record.getHero();
+            enemyTanks = Record.getEnemyTanks();
+        }
+        else {
+            initMyPanel();
+            return;
+        }
+        // 通过读取Record方式初始化时,需要手动启动坦克的线程
+        for (int i = 0; i < enemyTanks.size(); i++) {
+            EnemyTank enemyTank = enemyTanks.get(i);
+            new Thread(enemyTank).start();
+            enemyTank.setEnemyTanks(enemyTanks);
+            enemyTank.clearAllBullets();
+        }
+        // 清空集合内子弹,否则上一局的子弹仍然停留在原地
+        hero.clearAllBullet();
+        Bomb.imageInit();
+    }
 
     /**
      * @description paint()用于绘制图形,窗口中所有图形的生成都基于此方法
@@ -57,6 +98,7 @@ public class MyPanel extends JPanel implements KeyListener , Runnable{
         g.fillRect(0, 0, Width, Height);
         // 设置背景颜色
         g.setColor(Color.BLACK);
+        // 绘制相关信息
         showInfo(g);
         // 通过创建对象生成玩家坦克
         // 只有当玩家坦克存活时才绘制

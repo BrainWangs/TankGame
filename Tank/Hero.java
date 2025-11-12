@@ -35,11 +35,20 @@ public class Hero extends Tank{
     }
 
     /**
+     * @description 清空集合内子弹,该方法防止Record初始化MyPanel时上一局的子弹仍然停留在原地
+     */
+    public void clearAllBullet() {
+        for (int i = 0; i < heroBullets.size(); i++) {
+            // 获取子弹对象
+            Bullet bullet = heroBullets.get(i);
+            heroBullets.remove(bullet);
+        }
+    }
+
+    /**
      * @description 玩家坦克移动
      */
     public void heroMove(int dir) {
-        // 移动前检查是否越界
-
         // 移动
         move(dir);
     }

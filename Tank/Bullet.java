@@ -146,7 +146,7 @@ public class Bullet implements Runnable, Serializable {
             // 边界检测
             checkBorderHit();
             if (!isLive) {
-                System.out.println("子弹死亡 " + Thread.currentThread());
+                // System.out.println("子弹死亡 " + Thread.currentThread());
                 break;
             }
 

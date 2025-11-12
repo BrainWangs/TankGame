@@ -29,8 +29,16 @@ public class Record {
         Record.hero = hero;
     }
 
+    public static Hero getHero() {
+        return hero;
+    }
+
     public static void setEnemyTanks(Vector<EnemyTank> enemyTanks) {
         Record.enemyTanks = enemyTanks;
+    }
+
+    public static Vector<EnemyTank> getEnemyTanks() {
+        return enemyTanks;
     }
 
     public static void addScore() {
@@ -72,6 +80,7 @@ public class Record {
         }
     }
 
+
     /**
      * @description 读取文件
      */
@@ -87,7 +96,6 @@ public class Record {
             hero = (Hero) ois.readObject();
             enemyTanks = (Vector<EnemyTank>) ois.readObject();
 
-
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
@@ -95,6 +103,21 @@ public class Record {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
+        System.out.println(Record.score);
+        System.out.println(Record.destroyedNum);
+        System.out.println(Record.hero);
+        System.out.println(Record.enemyTanks);
+    }
+
+    /**
+     * @description 打印信息(测试用)
+     */
+    @Deprecated
+    public void printRecord() {
+        System.out.println(Record.score);
+        System.out.println(Record.destroyedNum);
+        System.out.println(Record.hero);
+        System.out.println(Record.enemyTanks);
     }
 
 }

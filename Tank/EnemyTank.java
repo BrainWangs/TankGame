@@ -17,7 +17,8 @@ public class EnemyTank extends Tank implements Runnable{
     }
 
     /**
-     * @description Vector存储每一辆敌人坦克的子弹集合
+     * @description
+     * Vector存储每一辆敌人坦克的子弹集合
      * 注意是每个敌人坦克都有一个这样的Vector
      */
     public Vector<Bullet> enemyBullets = new Vector<>();
@@ -43,6 +44,16 @@ public class EnemyTank extends Tank implements Runnable{
         int randomTime = (int)(Math.random() * 1000);
         if (randomTime % 2 == 0) {
             enemyShot();
+        }
+    }
+
+    /**
+     * @description 清空集合内子弹,该方法防止Record初始化MyPanel时上一局的子弹仍然停留在原地
+     */
+    public void clearAllBullets() {
+        for (int i = 0; i < enemyBullets.size(); i++) {
+            Bullet bullet = enemyBullets.get(i);
+            enemyBullets.remove(bullet);
         }
     }
 
@@ -73,7 +84,6 @@ public class EnemyTank extends Tank implements Runnable{
 
     /**
      * @description 敌人坦克体积碰撞检测
-     *
      */
     public boolean checkEnemyCollide() {
         switch (this.getDir()) {
